@@ -1,0 +1,29 @@
+
+
+.line
+{
+  &-container
+  {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+
+    &-header
+    {
+      margin-bottom: 10px;
+      background-color: rgba(207, 207, 207, .8);
+    }
+
+    &-select
+    {
+      background-color: rgba(59, 240, 143, 0.5);
+    }
+
+    &-hover
+    {
+      background-color: rgba(207, 207, 207, .3);
+    }
+  }
+}

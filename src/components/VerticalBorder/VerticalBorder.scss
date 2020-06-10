@@ -1,0 +1,16 @@
+.vertical-border
+{
+  width: 4px;
+  height: 100%;
+  position: absolute;
+  cursor: pointer;
+  z-index: 1;
+
+  &__content
+  {
+    width: 2px;
+    background-color: rgb(95, 94, 94);
+    height: 100%;
+    margin: auto;
+  }
+}
