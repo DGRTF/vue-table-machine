@@ -67,7 +67,6 @@ export default class Table extends Vue {
   AddLines(contentLineArr: HTMLElement[]) {
     if (this.firstLoad) {
       this.NewLines(contentLineArr);
-      console.warn('TwoLoad');
     }
     else
       this.Init(contentLineArr);

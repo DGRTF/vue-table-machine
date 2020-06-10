@@ -149,7 +149,6 @@ export default class Home extends Vue {
     ];
 
   mounted() {
-    console.warn(this.shopComplect);
     const headerHTML: HTMLElement[] = [];
     this.header.forEach(el => {
       const element = document.createElement('div');
@@ -277,7 +276,7 @@ export default class Home extends Vue {
       alert('Selected machine');
   }
 
-  private SetShopComplect(){
+  private SetShopComplect() {
     const shopComplect: {
       id: number;
       machineId: number;
@@ -285,7 +284,7 @@ export default class Home extends Vue {
     }[] = [];
 
     this.complectArr.forEach(el => {
-      if (el.machineId == this.editEmployee.id)
+      if (el.machineId === this.editEmployee.id)
         shopComplect.push(el);
     });
     if (shopComplect.length !== 0)
@@ -298,25 +297,28 @@ export default class Home extends Vue {
   }
 
   private SendCategory(formData: FormData) {
-    const change: {
-      id: number;
-      preview: string;
-      category: string;
-      name: string;
-      weight: number;
-      height: number;
-      width: number;
-      length: number;
-    }[] = [];
+    if (formData.get('category') === 'all'){
+      this.shopComplect = this.complectArr;
+      this.change = this.globalList.slice();
+    }
+    else {
+      const change: {
+        id: number;
+        preview: string;
+        category: string;
+        name: string;
+        weight: number;
+        height: number;
+        width: number;
+        length: number;
+      }[] = [];
 
-
-    this.globalList.forEach(el => {
-      console.warn(formData.get('category'));
-      console.warn(el.category);
-      if (el.category === formData.get('category'))
-        change.push(el);
-    });
-    this.change = change.slice();
+      this.globalList.forEach(el => {
+        if (el.category === formData.get('category'))
+          change.push(el);
+      });
+      this.change = change.slice();
+    }
     this.ChangeContent();
   }
 

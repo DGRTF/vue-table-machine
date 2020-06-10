@@ -66,9 +66,4 @@ export default class FormChangeBD extends Vue {
     labelImage.style.backgroundImage = 'url(/fileImg/DefaultEmployee.jpeg)';
   }
 
-  @Watch('inComplectArr')
-  private InComplectArr() {
-    console.warn(this.inComplectArr);
-  }
-
 }

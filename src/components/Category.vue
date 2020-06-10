@@ -4,8 +4,9 @@
       button.category__button(v-on:click='Close')='Закрыть'
     form.category__form(v-on:submit.prevent='SubmitForm')
       select.category__fields(name='category')
-        option.category__field(value='Оборудование для обработки дерева')='Оборудование для обработки дерева'
+        option.category__field(value='all')='Всё оборудование'
         option.category__field(value='Оборудование для обработки металла')='Оборудование для обработки металла'
+        option.category__field(value='Оборудование для обработки дерева')='Оборудование для обработки дерева'
       input.category__button(type='submit' value='Выбрать')
 </template>
 

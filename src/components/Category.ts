@@ -13,7 +13,6 @@ export default class Category extends Vue {
     const form = (event.target as HTMLFormElement);
     const formData = new FormData(form);
     this.formData = formData;
-    console.warn(formData.get('category'));
     this.$emit('send', this.formData);
   }
 
