@@ -10,21 +10,22 @@ export default class FormChangeBD extends Vue {
 
   @Prop() private inTemplate: {
     id: number;
-    name: string;
-    surname: string;
-    position: string;
     preview: string;
-    city: string;
-    street: string;
-    home: string;
-    flat: number;
-    remoteWork: boolean;
-    birthDate: string;
+    category: string;
+    name: string;
+    weight: number;
+    height: number;
+    width: number;
+    length: number;
   };
 
-  private formData: FormData;
+  @Prop() private inComplectArr: {
+    id: number;
+    machineId: number;
+    name: string;
+  }[];
 
-  private img: HTMLElement;
+  private formData: FormData;
 
   private PreviewImage(event: Event) {
     const el = (event.target as HTMLFormElement);
@@ -48,26 +49,26 @@ export default class FormChangeBD extends Vue {
   @Watch('inTemplate')
   private ChangeInTemplate(inTemplate: {
     id: number;
-    name: string;
-    surname: string;
-    position: string;
     preview: string;
-    address: string;
-    remoteWork: boolean;
-    birthDate: string;
+    category: string;
+    name: string;
+    weight: number;
+    height: number;
+    width: number;
+    length: number;
   }) {
     const labelImage = this.$refs.labelImage as HTMLElement;
     labelImage.style.backgroundImage = `url(${inTemplate.preview})`;
-    const checkbox = this.$refs.remoteWork as HTMLFormElement;
-    if (inTemplate.remoteWork)
-      checkbox.checked = true;
-    else
-      checkbox.checked = false;
   }
 
-  mounted(){
+  mounted() {
     const labelImage = this.$refs.labelImage as HTMLElement;
     labelImage.style.backgroundImage = 'url(/fileImg/DefaultEmployee.jpeg)';
+  }
+
+  @Watch('inComplectArr')
+  private InComplectArr() {
+    console.warn(this.inComplectArr);
   }
 
 }

@@ -1,12 +1,11 @@
 <template lang="pug">
   div
-    Form-change-bD(:path='addEmployeePath' :inTemplate='addEmployee' header='Добавить Работника' v-show='visibleAddEmployee' v-on:close='CloseAdd' v-on:send='SendAdd')
-    Form-change-bD(:path='editEmployeePath' :inTemplate='editEmployee' header='Редактировать Работника' v-show='visibleEditEmployee' v-on:close='CloseEdit' v-on:send='SendEdit')
+    Form-change-bD(:path='editEmployeePath' :inTemplate='editEmployee' header='Купить станок' v-show='visibleEditEmployee' v-on:close='CloseEdit' v-on:send='SendEdit' :inComplectArr='shopComplect')
+    category(v-show='visibleCategory' v-on:close='CloseCategory' v-on:send='SendCategory')
     div.container-table__crud-panel(v-show='visibleTable')
-      button.container-table__button(v-on:click='DeleteEmployee')='Удалить'
-      button.container-table__button(v-on:click='EditEmployee')='Редактировать'
-      button.container-table__button(v-on:click='AddEmployee')='Добавить'
-    Table(ref='table' :header="headerHTML" :countColumn="count" :contentLineArr="inDataArr" v-on:selectLine='SelectLineInTable')
+      button.container-table__button(v-on:click='SelectCategory')='Выбрать категорию'
+      button.container-table__button(v-on:click='EditEmployee')='Купить'
+    Table(ref='table' :header="headerHTML" :columnCount='count' :contentLineArr="inDataArr" v-on:selectLine='SelectLineInTable')
 </template>
 
 <style lang='scss'>

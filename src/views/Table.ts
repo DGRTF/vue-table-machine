@@ -14,13 +14,11 @@ export default class Table extends Vue {
 
   @Prop() private header: HTMLElement[];
 
-  @Prop() private countColumn: number;
+  @Prop() private columnCount: number;
 
   selectLine: number;
 
   private firstLoad = false;
-
-  private columnCount = 8;
 
   private currentElement: HTMLElement = null;
 

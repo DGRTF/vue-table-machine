@@ -2,125 +2,154 @@ import { Component, Vue } from 'vue-property-decorator';
 import Table from './Table.vue';
 import CurrentTable from './Table';
 import FormChangeBD from './../components/FormChangeBD.vue';
+import Category from './../components/Category.vue';
 
 
 @Component({
   components: {
     Table,
-    FormChangeBD
+    FormChangeBD,
+    Category,
   }
 })
 export default class Home extends Vue {
   private table: HTMLElement;
 
-  private visibleAddEmployee = false;
-
   private visibleEditEmployee = false;
+
+  private visibleCategory = false;
 
   private visibleTable = true;
 
   private editEmployee: {
     id: number;
-    name: string;
-    surname: string;
-    position: string;
     preview: string;
-    city: string;
-    street: string;
-    home: string;
-    flat: number;
-    remoteWork: boolean;
-    birthDate: string;
-  } = {
-      id: 1,
-      name: 'Имя',
-      surname: 'Фамилия',
-      position: 'Должность',
-      preview: 'Фото',
-      city: 'Город',
-      street: 'Улица',
-      home: 'Дом',
-      flat: 0,
-      remoteWork: false,
-      birthDate: '01.01.1980'
-    };
-
-  private addEmployee: {
-    id: number;
+    category: string;
     name: string;
-    surname: string;
-    position: string;
-    preview: string;
-    city: string;
-    street: string;
-    home: string;
-    flat: number;
-    remoteWork: boolean;
-    birthDate: string;
+    weight: number;
+    height: number;
+    width: number;
+    length: number;
   } = {
-      id: 1,
-      name: 'Имя',
-      surname: 'Фамилия',
-      position: 'Должность',
-      preview: '/fileImg/DefaultEmployee.jpeg',
-      city: 'Город',
-      street: 'Улица',
-      home: 'Дом',
-      flat: 0,
-      remoteWork: false,
-      birthDate: '01.01.1980'
+      id: null,
+      preview: '/fileImg/Default.jpeg',
+      category: null,
+      name: null,
+      weight: null,
+      height: null,
+      width: null,
+      length: null,
     };
 
   private inDataArr: HTMLElement[] = [];
 
-  private count = 8;
-
-  private addEmployeePath = 'Home/AddEmployee';
+  private count = 7;
 
   private editEmployeePath = 'Home/EditEmployee';
 
-  private date: Date;
-
-  private year: number;
-
-  private remoteWork: HTMLElement;
-
   private headerHTML: HTMLElement[] = [];
 
-  private reverseName = false;
-
-  private reverseSurname = false;
-
-  private reversePosition = false;
-
-  private reverseAddress = false;
-
   private header: string[] = [
-    'Превью',
-    'Имя',
-    'Фамилия',
-    'Дата рождения',
-    'Возраст',
-    'Должность',
-    'Удалённая работа',
-    'Адрес проживания'
+    'Вид',
+    'Категория',
+    'Название',
+    'Вес',
+    'Высота',
+    'Ширина',
+    'Длина'
   ];
 
   private change: {
     id: number;
-    name: string;
-    surname: string;
-    position: string;
     preview: string;
-    city: string;
-    street: string;
-    home: string;
-    flat: number;
-    remoteWork: boolean;
-    birthDate: string;
+    category: string;
+    name: string;
+    weight: number;
+    height: number;
+    width: number;
+    length: number;
   }[];
 
+  private globalList: {
+    id: number;
+    preview: string;
+    category: string;
+    name: string;
+    weight: number;
+    height: number;
+    width: number;
+    length: number;
+  }[];
+
+  private complectArr: {
+    id: number;
+    machineId: number;
+    name: string;
+  }[] = [
+      {
+        id: 1,
+        machineId: 1,
+        name: 'Пила ленточная',
+      },
+      {
+        id: 2,
+        machineId: 1,
+        name: 'Блок управления',
+      },
+      {
+        id: 3,
+        machineId: 1,
+        name: 'Защита от протеканий',
+      },
+
+      {
+        id: 4,
+        machineId: 2,
+        name: 'Фреза',
+      },
+      {
+        id: 5,
+        machineId: 2,
+        name: 'Пакет по для 3D изображений',
+      },
+      {
+        id: 6,
+        machineId: 2,
+        name: 'Набор подшипников',
+      },
+
+      {
+        id: 7,
+        machineId: 3,
+        name: 'Платформа для переноса станка',
+      },
+      {
+        id: 8,
+        machineId: 3,
+        name: 'Дополнительная станина',
+      },
+
+      {
+        id: 9,
+        machineId: 4,
+        name: 'Ножи',
+      },
+    ];
+
+  private shopComplect: {
+    id: number;
+    machineId: number;
+    name: string;
+  }[] = [
+      {
+        id: 0,
+        machineId: 0,
+        name: 'name',
+      },
+    ];
+
   mounted() {
+    console.warn(this.shopComplect);
     const headerHTML: HTMLElement[] = [];
     this.header.forEach(el => {
       const element = document.createElement('div');
@@ -129,101 +158,55 @@ export default class Home extends Vue {
       headerHTML.push(element);
     });
 
-    headerHTML[1].addEventListener('click', this.SortByName.bind(this));
-    headerHTML[2].addEventListener('click', this.SortBySurname.bind(this));
-    headerHTML[5].addEventListener('click', this.SortByPosition.bind(this));
-    headerHTML[7].addEventListener('click', this.SortByAddress.bind(this));
     this.headerHTML = headerHTML;
     this.GetElements();
   }
 
-  private SortByName() {
-    const xhr = new XMLHttpRequest();
-    xhr.open('POST', `Home/SortByName?reverse=${this.reverseName}`, false);
-    xhr.send();
-
-    if (xhr.status != 200) {
-      console.warn(xhr.status + ': ' + xhr.statusText);
-    } else {
-      this.change = JSON.parse(xhr.responseText);
-
-      if (this.reverseName)
-        this.reverseName = false;
-      else
-        this.reverseName = true;
-
-      this.ChangeContent();
-    }
-  }
-
-  private SortBySurname() {
-    const xhr = new XMLHttpRequest();
-    xhr.open('POST', `Home/SortBySurname?reverse=${this.reverseSurname}`, false);
-    xhr.send();
-
-    if (xhr.status != 200) {
-      console.warn(xhr.status + ': ' + xhr.statusText);
-    } else {
-      this.change = JSON.parse(xhr.responseText);
-
-      if (this.reverseSurname)
-        this.reverseSurname = false;
-      else
-        this.reverseSurname = true;
-
-      this.ChangeContent();
-    }
-  }
-
-  private SortByPosition() {
-    const xhr = new XMLHttpRequest();
-    xhr.open('POST', `Home/SortByPosition?reverse=${this.reversePosition}`, false);
-    xhr.send();
-
-    if (xhr.status != 200) {
-      console.warn(xhr.status + ': ' + xhr.statusText);
-    } else {
-      this.change = JSON.parse(xhr.responseText);
-
-      if (this.reversePosition)
-        this.reversePosition = false;
-      else
-        this.reversePosition = true;
-
-      this.ChangeContent();
-    }
-  }
-
-  private SortByAddress() {
-    const xhr = new XMLHttpRequest();
-    xhr.open('POST', `Home/SortByAddress?reverse=${this.reverseAddress}`, false);
-    xhr.send();
-
-    if (xhr.status != 200) {
-      console.warn(xhr.status + ': ' + xhr.statusText);
-    } else {
-      this.change = JSON.parse(xhr.responseText);
-
-      if (this.reverseAddress)
-        this.reverseAddress = false;
-      else
-        this.reverseAddress = true;
-
-      this.ChangeContent();
-    }
-  }
-
   private GetElements() {
-    const xhr = new XMLHttpRequest();
-    xhr.open('POST', 'Home/Index', false);
-    xhr.send();
-
-    if (xhr.status != 200) {
-      console.warn(xhr.status + ': ' + xhr.statusText);
-    } else {
-      this.change = JSON.parse(xhr.responseText);
-      this.ChangeContent();
-    }
+    this.change = [
+      {
+        id: 1,
+        preview: '/fileImg/Default.jpeg',
+        category: 'Оборудование для обработки дерева',
+        name: 'Пилорама ленточная',
+        weight: 118.6,
+        height: 2.1,
+        width: 1.84,
+        length: 10,
+      },
+      {
+        id: 2,
+        preview: '/fileImg/Default.jpeg',
+        category: 'Оборудование для обработки металла',
+        name: 'Фрезерный станок с ЧПУ',
+        weight: 80,
+        height: 1.6,
+        width: 1.2,
+        length: 1.2,
+      },
+      {
+        id: 3,
+        preview: '/fileImg/Default.jpeg',
+        category: 'Оборудование для обработки металла',
+        name: 'Гибочный станок',
+        weight: 120,
+        height: 2.1,
+        width: 1.8,
+        length: 2,
+      },
+      {
+        id: 4,
+        preview: '/fileImg/Default.jpeg',
+        category: 'Оборудование для обработки дерева',
+        name: 'Фуговальный станок',
+        weight: 60,
+        height: .8,
+        width: .5,
+        length: 1.2,
+      },
+    ];
+    this.globalList = this.change.slice();
+    this.ChangeContent();
   }
 
   private ChangeContent() {
@@ -234,103 +217,32 @@ export default class Home extends Vue {
       elPreview.style.backgroundImage = `url(${el.preview})`;
       dataHTMLArr.push(elPreview);
 
+      const elCategory = document.createElement('div');
+      elCategory.innerText = el.category;
+      dataHTMLArr.push(elCategory);
+
       const elName = document.createElement('div');
       elName.innerText = el.name;
       dataHTMLArr.push(elName);
 
-      const elSurname = document.createElement('div');
-      elSurname.innerText = el.surname;
-      dataHTMLArr.push(elSurname);
+      const elWeight = document.createElement('div');
+      elWeight.innerText = `${el.weight}`;
+      dataHTMLArr.push(elWeight);
 
-      const elBirthDate = document.createElement('div');
-      this.date = new Date(el.birthDate);
-      const birthDay = this.date.getDate();
-      const birthMonth = this.date.getMonth() + 1;
-      const birthYear = this.date.getFullYear();
-      elBirthDate.innerText = `${birthDay}.${birthMonth}.${birthYear}`;
-      dataHTMLArr.push(elBirthDate);
+      const elHeight = document.createElement('div');
+      elHeight.innerText = `${el.height}`;
+      dataHTMLArr.push(elHeight);
 
-      this.CreateAgeYear();
+      const elWidth = document.createElement('div');
+      elWidth.innerText = `${el.width}`;
+      dataHTMLArr.push(elWidth);
 
-      const elAge = document.createElement('div');
-      elAge.innerText = `${this.year}`;
-      dataHTMLArr.push(elAge);
-
-      const elPosition = document.createElement('div');
-      elPosition.innerText = el.position;
-      dataHTMLArr.push(elPosition);
-
-      this.CreateRemoteWorkHTMLElement(el.remoteWork);
-      dataHTMLArr.push(this.remoteWork);
-
-      const elAddress = document.createElement('div');
-      elAddress.innerText = `${el.city} ${el.street} д. ${el.home} кв. ${el.flat}`;
-      dataHTMLArr.push(elAddress);
+      const elLength = document.createElement('div');
+      elLength.innerText = `${el.length}`;
+      dataHTMLArr.push(elLength);
 
     });
     this.inDataArr = dataHTMLArr;
-  }
-
-  private CreateAgeYear() {
-    const currentDate = new Date();
-    this.year = currentDate.getFullYear() - this.date.getFullYear() - 1;
-    if (this.date.getMonth() <= currentDate.getMonth())
-      if (this.date.getMonth() === currentDate.getMonth()) {
-        if (this.date.getDate() <= currentDate.getDate())
-          this.year += 1;
-      } else
-        this.year += 1;
-  }
-
-  private CreateRemoteWorkHTMLElement(remoteWork: boolean) {
-    this.remoteWork = document.createElement('div');
-    this.remoteWork.classList.add('container-table__remote-work');
-    if (remoteWork) {
-      const trueRemoteWork = document.createElement('div');
-      trueRemoteWork.classList.add('container-table__remote-work__true');
-      this.remoteWork.appendChild(trueRemoteWork);
-    }
-  }
-
-  private DeleteEmployee() {
-    const number = (this.$refs.table as CurrentTable).selectLine;
-    if (number >= 0) {
-      const result = confirm("Delete employee from DB?");
-      if (result) {
-        const id = this.change[number].id;
-
-        const xhr = new XMLHttpRequest();
-        xhr.open('POST', `Home/DeleteEmployee?id=${id}`, false);
-        xhr.send();
-
-        if (xhr.status != 200) {
-          console.warn(xhr.status + ': ' + xhr.statusText);
-        } else {
-          this.change = JSON.parse(xhr.responseText);
-          this.ChangeContent();
-        }
-      }
-    }
-  }
-
-  private EditEmployee() {
-    const number = (this.$refs.table as CurrentTable).selectLine;
-    if (number >= 0) {
-      this.editEmployee = this.change[number];
-      this.visibleTable = false;
-      this.visibleEditEmployee = true;
-    } else
-      alert('Selected employee');
-  }
-
-  private AddEmployee() {
-    this.visibleTable = false;
-    this.visibleAddEmployee = true;
-  }
-
-  private CloseAdd() {
-    this.visibleTable = true;
-    this.visibleAddEmployee = false;
   }
 
   private CloseEdit() {
@@ -338,30 +250,10 @@ export default class Home extends Vue {
     this.visibleEditEmployee = false;
   }
 
-  private async SendAdd(formData: FormData) {
-    console.warn(formData);
-    const response = await fetch(`${this.addEmployeePath}`, {
-      method: 'POST',
-      body: formData
-    });
-
-    this.change = await response.json();
-    this.ChangeContent();
-  }
-
-  private async SendEdit(formData: FormData) {
+  private async SendEdit() {
     const item = (this.$refs.table as CurrentTable).selectLine;
     if (item >= 0) {
-      const id = this.change[item].id;
-      formData.append('id', `${id}`);
-
-      const response = await fetch(`${this.editEmployeePath}`, {
-        method: 'POST',
-        body: formData
-      });
-
-      this.change = await response.json();
-      this.ChangeContent();
+      alert('Заявка отправлена!')
     } else
       alert('Selected employee');
   }
@@ -370,7 +262,67 @@ export default class Home extends Vue {
     if (!this.visibleTable)
       if (selectLine >= 0) {
         this.editEmployee = this.change[selectLine];
+        this.SetShopComplect();
       }
+  }
+
+  private EditEmployee() {
+    const number = (this.$refs.table as CurrentTable).selectLine;
+    if (number >= 0) {
+      this.editEmployee = this.change[number];
+      this.SetShopComplect();
+      this.visibleTable = false;
+      this.visibleEditEmployee = true;
+    } else
+      alert('Selected machine');
+  }
+
+  private SetShopComplect(){
+    const shopComplect: {
+      id: number;
+      machineId: number;
+      name: string;
+    }[] = [];
+
+    this.complectArr.forEach(el => {
+      if (el.machineId == this.editEmployee.id)
+        shopComplect.push(el);
+    });
+    if (shopComplect.length !== 0)
+      this.shopComplect = shopComplect;
+  }
+
+  private SelectCategory() {
+    this.visibleTable = false;
+    this.visibleCategory = true;
+  }
+
+  private SendCategory(formData: FormData) {
+    const change: {
+      id: number;
+      preview: string;
+      category: string;
+      name: string;
+      weight: number;
+      height: number;
+      width: number;
+      length: number;
+    }[] = [];
+
+
+    this.globalList.forEach(el => {
+      console.warn(formData.get('category'));
+      console.warn(el.category);
+      if (el.category === formData.get('category'))
+        change.push(el);
+    });
+    this.change = change.slice();
+    this.ChangeContent();
+  }
+
+  private CloseCategory() {
+    this.visibleTable = true;
+    this.visibleCategory = false;
   }
 
 }
